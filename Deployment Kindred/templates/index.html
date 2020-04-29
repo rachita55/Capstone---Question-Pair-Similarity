@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Questions Predictor</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<style>
+		html{width:100%;height:100%;margin:0 !important;}
+		body{background-color:#B0E0E6;width:100%;height:100%;margin:0 !important;}
+		@font-face {
+		  font-family: "varela";
+		  src: url("static/varela.ttf");
+		}
+		.flex-row-center{display:flex;flex-direction: row;justify-content: center;align-items: center;}
+		.flex-column-center{display:flex;flex-direction: column;justify-content: center;align-items: center;}
+		.flex-column-start{display:flex;flex-direction: column;justify-content: flex-start;align-items: center;}
+		.flex-column-end{display:flex;flex-direction: column;justify-content: flex-end;align-items: center;}
+		#question_submit_div{width:800px;height:220px;border:solid 3px black;border-radius:4px;}
+		#question_submit_head{font-family:"varela";font-size:20px;font-weight:bold;width: 100%;height:50px;background-color:#663399;color:white;z-index: 1;}
+		#question_submit_list_head{font-family:"varela";font-size:20px;font-weight:bold;width: 100%;height:50px;background-color:#663399;color:white;z-index: 1;}
+		#question_submit_list_item{z-index:0;margin:10px;font-family:"varela";font-size:20px;font-weight:bold;width: 95%;min-height:40px;height:auto;background-color: mediumseagreen;color:black;z-index: 1;}
+		#question_submit_content{width:100%;height:170px;z-index: 0;}
+		#question_submit_input_div{width:500px;height:180px;z-index:1;}
+		#question_submit_button_div{margin-left:20px;width:120px;height:72%;}
+		#question_submit_button{width:100%;height:40px;border-radius:20px;background-color: green;font-family: "varela";color:white;font-size:18px;font-weight:bolder;border:none;cursor:pointer;}
+		#questions_list{margin-top:20px;width:800px;border:solid 3px black;border-radius:4px;}
+		#question_submit_list_content{width:100%;margin-top: 10px;margin-bottom: 10px;}
+		#question_submit_list_div{width:100%;max-height:300px;overflow:auto;}
+		#heading{width:700px;height:40px;color:red;font-family: "varela";font-size:30px;font-weight:bolder;margin-bottom: 20px;text-shadow: 2px 2px lightgreen;}
+		#sp_button_div{width:120px;height:90%;margin-right:20px;}
+	</style>
+</head>
+<body class="flex-column-start">
+	<div class="flex-column-center" id="heading">"KindRed"</div>
+	<div class="flex-column-center"  id="question_submit_div">
+		<div  class="flex-column-center" id="question_submit_head">Post your question here</div>
+		<div class="flex-row-center" id="question_submit_content">
+			<span id="sp_button_div" class="flex-column-start"><button class="flex-row-center" id="speak" style="margin:10px;border:black;border-radius:4px;background-color:#663399;width:100px;height:40px;font-size:20px;font-weight:bolder;color:white;cursor:pointer;">Speak!</button></span>
+			<div class="flex-column-center" id="question_submit_input_div">
+				<input  id="question_submit_input" type="text" placeholder="Question" style="z-index:2;color:black;width:100%;height:40px;border-radius: 20px;font-family: 'varela round';font-size:18px;font-weight:bold; text-align:center;border:none;">
+				<textarea  id="question_submit_input_summary" placeholder="Summary" style="z-index:2;color:black;width:100%;height:70px;margin-top:20px;border-radius: 20px;font-family: 'varela round';font-size:18px;font-weight:bold; text-align:center;border:none;"></textarea>
+			</div>
+			<div class="flex-column-end" id="question_submit_button_div"><button class="flex-row-center" id="question_submit_button">Submit</button></div>
+		</div>
+	</div>
+	<div class="flex-column-center" id="questions_list">
+		<div  class="flex-column-center" id="question_submit_list_head">Related Questions</div>
+		<div class="flex-column-start" id="question_submit_list_div"><div class="flex-column-center" id="question_submit_list_content"> </div></div>
+	</div>
+
+</body>
+<script>
+
+	//function hide_list(){
+		//$('#questions_list').css("display","none");
+	//}
+
+	$('#question_submit_button').click(function(){
+		//$('#questions_list').css("display","flex"); onchange = "hide_list()"
+		var question = $('#question_submit_input').val();
+		var summary = $('#question_submit_input_summary').val();
+		console.log(question);
+		if(question!=""){
+			$('#question_submit_list_content').html("<div class='flex-row-center' style='font-weight:bold;font-size:20px;color:black;'>Loading Questions...Please Wait!</div>");
+		$.ajax({
+		    url : "/predict",
+		    type: "POST",
+		    data : {question:question,summary:summary},
+		    success: function(data)
+		    {
+		    	$('#question_submit_list_content').html("");
+		    	var response = JSON.parse(data);
+		        console.log(response);
+		        var content = "";
+		        for (var key in response){
+		        	content += "<div class='flex-row-center' id='question_submit_list_item'><div class='flex-row-center' style='min-height:40px;width:80%;font-weight:bold;font-size:20px;color:black;'>"+response[key].split("|")[0]+" ?</div><div class='flex-row-center' style='height:25px;width:15%;border-radius:4px;font-weight:bold;background-color:cyan;'><a style='font-size:20px;color:black;' target='_blank' href='https://"+response[key].split("|")[1]+"'>Read</a></div></div>" 
+		        }
+		        $('#question_submit_list_content').html(content);
+		    },
+		    error: function ()
+		    {
+		 
+		    }
+
+		});
+	}else{
+		alert("Question field is Blank! Please Enter a question!");
+	}
+	});
+
+
+	$("#speak").click(function(){
+
+		try {
+				  var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+				  var recognition = new SpeechRecognition();
+				  recognition.onstart = function() { 
+					  //instructions.text('Voice recognition activated. Try speaking into the microphone.');
+					  $("#speak").css("background-color","green");
+					}
+
+					recognition.onspeechend = function() {
+					  //instructions.text('You were quiet for a while so voice recognition turned itself off.');
+					  $("#speak").css("background-color","#663399");
+					}
+
+					recognition.onerror = function(event) {
+					  if(event.error == 'no-speech') {
+					    alert('No speech was detected. Try again.');  
+					  };}
+
+					  recognition.onresult = function(event) {
+
+						  // event is a SpeechRecognitionEvent object.
+						  // It holds all the lines we have captured so far. 
+						  // We only need the current one.
+						  var current = event.resultIndex;
+
+						  // Get a transcript of what was said.
+						  var transcript = event.results[current][0].transcript;
+
+						  // Add the current transcript to the contents of our Note.
+						  $('#question_submit_input').val(transcript);
+						  $('#question_submit_button').click();
+						  
+						}
+						recognition.start();
+					
+				}
+				catch(e) {
+				  console.error(e);
+				  alert("No Speech Recognition Browser Support");
+				}
+
+	});
+
+</script>
+</html>
