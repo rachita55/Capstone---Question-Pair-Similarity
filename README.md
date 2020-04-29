@@ -10,12 +10,19 @@ However, many such questions may already be answered and all these answers are f
 
 To avoid the problem of redundancy and duplicity of answers, we, at Praxis Business School, Bangalore have started our #Capstone project with the objective to design a system that will be able to identify similar questions using state-of-the-art #NLP techniques and fetch answers from such similar questions, hence improving user experience.
 
+
 This project is presented by :
+
 Abhilasha chourasia 
+
 [Ankit Kumar Das](https://github.com/Ankit-Das)
+
 Kusum Sharma
+
 Pradip Samuel Sen
+
 [Rachita Pateria](https://github.com/rachita55)
+
 
 
 Follow us on LinkedIn - https://www.linkedin.com/feed/update/urn:li:activity:6661232554756177921/
